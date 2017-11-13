@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Represents a movie.
@@ -260,19 +259,10 @@ public class Movie extends Entity implements Searchable {
         tags.addAll(Arrays.asList(title.split(" ")));
         tags.add(title);
 
-        // Actors
-        for (MoviePerson moviePerson : actors) {
-            tags.add(moviePerson.getFirstName());
-            tags.add(moviePerson.getLastName());
-            tags.add(moviePerson.getFullName());
-        }
-
-        // Director
-        tags.add(director.getFirstName());
-        tags.add(director.getLastName());
-        tags.add(director.getFullName());
-
-        tags.removeAll(Collections.singleton(null));
+        // Actors and Director
+        for (MoviePerson actor : actors)
+            tags.addAll(actor.getSearchTags());
+        tags.addAll(director.getSearchTags());
         return tags;
     }
 

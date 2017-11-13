@@ -7,6 +7,7 @@ import model.booking.BookingStatus;
 import model.booking.Showtime;
 import model.booking.ShowtimeStatus;
 import model.cineplex.Cineplex;
+import model.commons.Searchable;
 import model.movie.*;
 import util.Utilities;
 
@@ -19,11 +20,6 @@ import java.util.stream.Collectors;
  @since 2017-10-20
  */
 public class MovieController extends EntityController<Movie> {
-
-    /**
-     * The threshold score for the searching similarity is 5.
-     */
-    private static final int SEARCH_SIMILARITY_THRESHOLD = 5;
 
     /**
      * A reference to this singleton instance.
@@ -165,27 +161,13 @@ public class MovieController extends EntityController<Movie> {
      * @return a list of movies that has the information of which similarity to the keyword
      * is within the similarity threshold.
      */
+    @SuppressWarnings("unchecked")
     public List<Movie> findByKeyword(String keyword) {
-        Hashtable<Movie, Integer> searchResults = new Hashtable<>();
-        for (Movie movie : entities.values()) {
-            int minDistance = Integer.MAX_VALUE;
-            for (String tag : movie.getSearchTags()) {
-                int tagMaxScore = tag.length() + (tag.length() - 1) * 2;
-                int score = Utilities.fuzzyScore(keyword, tag);
-                if (score > 0) {
-                    int distance = tagMaxScore - score;
-                    if (minDistance > distance) {
-                        System.out.println(tag + distance);
-                        minDistance = distance;
-                    }
-                }
-            }
-            if (minDistance <= SEARCH_SIMILARITY_THRESHOLD)
-                searchResults.put(movie, minDistance);
-        }
-        ArrayList<Movie> movies = new ArrayList<>(searchResults.keySet());
-        Collections.sort(movies, Comparator.comparingInt(searchResults::get).reversed());
-        return movies;
+        return Searchable.fuzzySearch(entities.values().stream()
+                .map(movie -> (Searchable) movie)
+                .collect(Collectors.toList()), keyword)
+                .stream().map(searchable -> (Movie) searchable)
+                .collect(Collectors.toList());
     }
 
     /**

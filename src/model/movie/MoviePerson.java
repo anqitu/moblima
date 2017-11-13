@@ -1,6 +1,10 @@
 package model.movie;
 
 import model.commons.Person;
+import model.commons.Searchable;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Represents a movie-related person who can be a director or an actor.
@@ -8,7 +12,7 @@ import model.commons.Person;
  * @version 1.0
  * @since 2017-10-20
  */
-public class MoviePerson extends Person {
+public class MoviePerson extends Person implements Searchable {
 
     /**
      * Creates a movie person by a given full name.
@@ -27,5 +31,10 @@ public class MoviePerson extends Person {
      */
     public MoviePerson(String firstName, String lastName) {
         super(firstName, lastName);
+    }
+
+    @Override
+    public List<String> getSearchTags() {
+        return Arrays.asList(firstName, lastName, getFullName());
     }
 }
