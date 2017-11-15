@@ -28,7 +28,7 @@ public class MainMenuView extends MenuView {
 
         setMenuItems(MainMenuOption.values());
         setTitle("MOBLIMA " + version);
-        setContent("TODO Description here");
+        setContent("Welcome to MOBLIMA APP.");
     }
 
     @Override

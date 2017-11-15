@@ -24,7 +24,12 @@ public interface Searchable {
      */
     List<String> getSearchTags();
 
-    // TODO Javadoc
+    /**
+     * Gets the list of searchable for the given keywords.
+     * @param searchables The given searchable word.
+     * @param keyword The given keyword
+     * @return matched results according to the fuzzySearch algorithm.
+     */
     static List<Searchable> fuzzySearch(List<Searchable> searchables, String keyword) {
         Hashtable<Searchable, Integer> searchResults = new Hashtable<>();
         for (Searchable item: searchables) {

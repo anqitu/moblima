@@ -2,8 +2,6 @@ package controller;
 
 import exception.IllegalActionException;
 import exception.UninitialisedSingletonException;
-import model.booking.Booking;
-import model.booking.BookingStatus;
 import model.booking.Showtime;
 import model.booking.ShowtimeStatus;
 import model.cineplex.Cineplex;
@@ -127,33 +125,6 @@ public class MovieController extends EntityController<Movie> {
         movie.setRuntime(runtimeMinutes);
     }
 
-    /**
-     * Change the movie type of the movie with the given ID to the given movie type.
-     * @param movieId The ID of the movie to be changed.
-     * @param type The new movie type of this movie.
-     * @throws IllegalActionException if the movie to be changes is not coming soon now, which means
-     * it is showing or has ended showing already.
-     */
-    public void changeMovieType(UUID movieId, MovieType type) throws IllegalActionException {
-        Movie movie = findById(movieId);
-        if (movie.getStatus() != MovieStatus.COMING_SOON)
-            throw new IllegalActionException("Cannot only change movie type when it is not yet available for screening");
-        movie.setType(type);
-    }
-
-    /**
-     * Finds movies by the given list of movie status.
-     * @param status The list of movie status of the movies to be searched for.
-     * @return a list of movies in the status inside this list of movie status.
-     */
-    public List<Movie> findByStatus(MovieStatus... status) {
-        ArrayList<Movie> movies = new ArrayList<>();
-        List<MovieStatus> statuses = Arrays.asList(status);
-        for (Movie movie : entities.values())
-            if (statuses.contains(movie.getStatus()))
-                movies.add(movie);
-        return movies;
-    }
 
     /**
      * Finds movies by the given keyword.
@@ -182,22 +153,5 @@ public class MovieController extends EntityController<Movie> {
         return entities.values().stream().filter(movie ->
                 movie.getShowtimes().stream().anyMatch(showtime ->
                         showtime.getCineplex().equals(cineplex))).collect(Collectors.toList());
-    }
-
-    /**
-     * Gets the total ticket sale of a movie with the given movie ID.
-     *
-     * @param movieId the given ID of a movie.
-     * @return this movie's total ticket sale.
-     */
-    public int getTicketSales(UUID movieId) {
-        Movie movie = findById(movieId);
-        int sum = 0;
-        for (Showtime showtime : movie.getShowtimes())
-            if (showtime.getStatus() != ShowtimeStatus.CANCELLED)
-                for (Booking booking : showtime.getBookings())
-                    if (booking.getStatus() == BookingStatus.CONFIRMED)
-                        sum += booking.getTotalTicketsCount();
-        return sum;
     }
 }
